@@ -17,7 +17,7 @@ Register a domain name for your DNS service through a domain registrar
 
 Zone - a bind zone is a segment of the DNS namespace that is managed by a specific DNS server. This server is responsible for providing authoritative answers for the domain names within that zone. Zones can be defined as either primary or secondary.
 
-Primary Zone - The primary bind zone is the master copy of the zone file. Changes to the DNS records are made here, and these changes are then propagated to secondary zones through zone transfers.
+Primary Zone - The primary bind zone is the primary copy of the zone file. Changes to the DNS records are made here, and these changes are then propagated to secondary zones through zone transfers.
 
 Secondary Zone - A secondary bind zone receives a copy of the zone data from the primary zone. It acts as a backup and can also provide authoritative answers for the zone, helping to distribute the load and improve reliability.
 
@@ -105,18 +105,18 @@ Bind provides a command which verifies server configuration for syntax errors bu
 #### 1.3 Configuring Local Options - Part 1
 The `/etc/bind/named.conf.local` file contains the local DNS server configuration, including zone declarations and other local settings. It is where you declare the zones associated with your domain and define their properties.
 
-Because in our example this will be the main and only dns server, we will set the local options up to have a single master zone. In addition, this is being organized such that a zone will manage a subnet of `192/168.0.0/16` but in reality we are only going to be adding records for the acl we defined above as `192.168.4.0/24`. 
+Because in our example this will be the main and only dns server, we will set the local options up to have a single primary zone. In addition, this is being organized such that a zone will manage a subnet of `192/168.0.0/16` but in reality we are only going to be adding records for the acl we defined above as `192.168.4.0/24`. 
 
     sudo tee /etc/bind/named.conf.local > /dev/null << EOF
     // Primary server for pitchblack408.lab
     zone "pitchblack408.lab" {
-    type master;
+    type primary;
     file "/etc/bind/zones/pitchblack408.lab"; # zone file path
     // allow-transfer ; # ns2 private IP address - secondary
     };
     // Provides reverse mapping zone
     zone "168.192.in-addr.arpa" {
-    type master;
+    type primary;
     file "/etc/bind/zones/192.168"; # 192/168.0.0/16 subnet
     // allow-transfer ; # ns2 private IP address - secondary
     };
