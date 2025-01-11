@@ -74,6 +74,7 @@ In this example, this will provide dns to a local lab and the network ip is 198.
     listen-on port 53 { 192.168.4.114; };
     listen-on-v6 port 53 { "none"; };
     directory "/var/cache/bind";
+
     // If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
     // If you are building a RECURSIVE (caching) DNS server, you need to enable recursion.
     // If your recursive DNS server has a public IP address, you MUST enable access
@@ -82,8 +83,13 @@ In this example, this will provide dns to a local lab and the network ip is 198.
     // attacks. Implementing BCP38 within your network would greatly
     // reduce such attack surface
     recursion no;
-    allow-query { localclients; };  
+    
+    allow-query { localclients; };
+    
+    // auth-nxdomain no is the default, ensuring the server behaves strictly according 
+    // to whether it is authoritative.
     auth-nxdomain no;
+    
     // If there is a firewall between you and nameservers you want
     // to talk to, you may need to fix the firewall to allow multiple
     // ports to talk. See http://www.kb.cert.org/vuls/id/800113
@@ -98,12 +104,12 @@ In this example, this will provide dns to a local lab and the network ip is 198.
     
     // Need to configure dynamic keys to use dnssec.
     //dnssec-enable yes;
-
     //========================================================================
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys. See https://www.isc.org/bind-keys
     //========================================================================
     dnssec-validation yes;
+
     };
     EOF
 
@@ -308,6 +314,7 @@ Adding blocking acls
     listen-on port 53 { 192.168.4.114; };
     listen-on-v6 port 53 { "none"; };
     directory "/var/cache/bind";
+
     // If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
     // If you are building a RECURSIVE (caching) DNS server, you need to enable recursion.
     // If your recursive DNS server has a public IP address, you MUST enable access
@@ -316,10 +323,14 @@ Adding blocking acls
     // attacks. Implementing BCP38 within your network would greatly
     // reduce such attack surface
     recursion no;
+
     blackhole { bogusnets; };
     allow-query { localclients; };
 
+    // auth-nxdomain no is the default, ensuring the server behaves strictly according 
+    // to whether it is authoritative.
     auth-nxdomain no;
+
     //========================================================================
     // If there is a firewall between you and nameservers you want
     // to talk to, you may need to fix the firewall to allow multiple ports to talk. 
@@ -334,12 +345,12 @@ Adding blocking acls
 
     // Need to configure dynamic keys to use dnssec.
     dnssec-enable yes;
-
     //========================================================================
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys. See https://www.isc.org/bind-keys
     //========================================================================
     dnssec-validation yes;
+
     };
     EOF
 
