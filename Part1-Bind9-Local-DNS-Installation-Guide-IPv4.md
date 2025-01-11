@@ -28,6 +28,8 @@ reverse lookup
 
 ## Prereqs
 Raspberry Pi or Ubuntu Linux
+A Local router
+Static ip assigned to your Raspberry Pi or Ubuntu Linux box
 
 ## Install bind9
 
