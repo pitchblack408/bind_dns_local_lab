@@ -157,7 +157,7 @@ In addition the ipv6 unique local range fd84:f006:1a18::/64 and or IPv6 local li
     EOF
 
 
-#### 1.4 Configuring Local Options - Routes Part 2
+#### 1.5 Configuring Local Options - Routes Part 2
 In the the step above we referenced where we are going to place the zone config files. Now we need to create that folder and the files.
 
 First create the folder
