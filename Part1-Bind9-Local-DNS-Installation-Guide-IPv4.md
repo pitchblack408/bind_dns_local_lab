@@ -297,7 +297,7 @@ Adding blocking acls
     };
     options {
     directory "/var/cache/bind";
-    recursion yes;
+    recursion no;
     blackhole { bogusnets; };
     allow-query { localclients; };
     //dnssec-enable yes;
