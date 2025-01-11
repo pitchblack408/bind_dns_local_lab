@@ -59,7 +59,7 @@ In terminal run to create the file.
     EOF
 
 
-
+Since this was a server config default, it is safer to reboot to make sure change takes place.
 
 #### 1.2 Configuring Global Options
 The `named.conf.options` file is where you set the configuration options for the overall dns server.
@@ -73,7 +73,7 @@ In this example, this will provide dns to a local lab and the network ip is 198.
     localnets;
     };
     options {
-    listen-on port 53 { 192.168.4.114; };
+    listen-on port 53 { 127.0.0.1; 192.168.4.141; };
     listen-on-v6 port 53 { "none"; };
     directory "/var/cache/bind";
 
@@ -148,7 +148,7 @@ First create the folder
 
     sudo mkdir /etc/bind/zones/
 
-Create the dns config for the foward lookup
+Create the dns config for the forward lookup
 
     sudo tee /etc/bind/zones/pitchblack408.lab > /dev/null << EOF
     ;
@@ -206,7 +206,7 @@ Reload server
 
 Check status
 
-    sudo systemctl restart bind9
+    sudo systemctl status bind9
 
 
 # Verify Results
@@ -225,8 +225,7 @@ From a different PC on your network
 
     nslookup r2d2.pitchblack408.lab 192.168.4.141
 
-If it returns `Server:  UnKnown` but returns the ip address you are fine.
-
+If you tried from a windows machines it returns `Server:  UnKnown` but if it returns the ip address you are fine.
 
 # Add dns to Devices
 The dns server is working, but the other computers will not know about it automatically.
@@ -313,7 +312,7 @@ Adding blocking acls
     localnets;
     };
     options {
-    listen-on port 53 { 192.168.4.114; };
+    listen-on port 53 { 127.0.0.1; 192.168.4.141; };
     listen-on-v6 port 53 { "none"; };
     directory "/var/cache/bind";
 
