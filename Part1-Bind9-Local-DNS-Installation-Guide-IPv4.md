@@ -74,9 +74,15 @@ In this example, this will provide dns to a local lab and the network ip is 198.
     listen-on port 53 { 192.168.4.114; };
     listen-on-v6 port 53 { "none"; };
     directory "/var/cache/bind";
-    recursion yes;
-    allow-query { localclients; };
-    //dnssec-enable yes;
+    // If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
+    // If you are building a RECURSIVE (caching) DNS server, you need to enable recursion.
+    // If your recursive DNS server has a public IP address, you MUST enable access
+    // control to limit queries to your legitimate users. Failing to do so will
+    // cause your server to become part of large scale DNS amplification
+    // attacks. Implementing BCP38 within your network would greatly
+    // reduce such attack surface
+    recursion no;
+    allow-query { localclients; };  
     auth-nxdomain no;
     // If there is a firewall between you and nameservers you want
     // to talk to, you may need to fix the firewall to allow multiple
@@ -86,10 +92,13 @@ In this example, this will provide dns to a local lab and the network ip is 198.
     // Uncomment the following block, and insert the addresses replacing
     // the all-0's placeholder.
     forwarders {
-    1.1.1.1; // Cloudflair
-    1.0.0.1; // Cloudflair
     8.8.8.8; // Google
+    8.8.4.4; // Google
     };
+    
+    // Need to configure dynamic keys to use dnssec.
+    //dnssec-enable yes;
+
     //========================================================================
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys. See https://www.isc.org/bind-keys
@@ -296,6 +305,8 @@ Adding blocking acls
     localnets;
     };
     options {
+    listen-on port 53 { 192.168.4.114; };
+    listen-on-v6 port 53 { "none"; };
     directory "/var/cache/bind";
     // If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
     // If you are building a RECURSIVE (caching) DNS server, you need to enable recursion.
@@ -320,17 +331,15 @@ Adding blocking acls
     8.8.8.8; // Google
     8.8.4.4; // Google
     };
-    
+
     // Need to configure dynamic keys to use dnssec.
-    // For now leaving it disabled.
-    // dnssec-enable yes;
+    dnssec-enable yes;
 
     //========================================================================
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys. See https://www.isc.org/bind-keys
     //========================================================================
     dnssec-validation yes;
-    listen-on-v6 { "none"; };
     };
     EOF
 
