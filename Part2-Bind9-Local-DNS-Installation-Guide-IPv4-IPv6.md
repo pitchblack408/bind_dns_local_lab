@@ -253,32 +253,49 @@ Check status
 # Verify Results
 On the dns server run dig and nslookup to verify results.
 
-Verify IPV4
 
-reverse lookup
+
+Verify IPV4 reverse lookup
 
     dig @127.0.0.1 -x 192.168.4.141
 
-Verify forward lookup
+Verify IPV4 forward lookup
+
+Run
 
     nslookup r2d2.pitchblack408.lab 127.0.0.1
 
+Run
+
     nslookup r2d2.pitchblack408.lab 192.168.4.141
 
-Verify IPV6
+Verify IPV6 reverse lookup
+
+Run
 
     dig @::1 -x fd84:f006:1a18:1:e2e3:3f41:84a7:f0e4
 
+Verify IPV6 forward lookup
+
+Run
+
     nslookup r2d2.pitchblack408.lab ::1
+
+Run
+
     nslookup r2d2.pitchblack408.lab fd84:f006:1a18:1:e2e3:3f41:84a7:f0e4
 
 
 From a different PC on your network test
 Verify IPV4
 
+Run
+
     nslookup r2d2.pitchblack408.lab 192.168.4.141
 
 Verify IPV6
+
+Run
 
     nslookup r2d2.pitchblack408.lab fd84:f006:1a18:1:e2e3:3f41:84a7:f0e4
 
