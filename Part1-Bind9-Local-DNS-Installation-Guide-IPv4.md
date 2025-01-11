@@ -71,6 +71,8 @@ In this example, this will provide dns to a local lab and the network ip is 198.
     localnets;
     };
     options {
+    listen-on port 53 { 192.168.4.114; };
+    listen-on-v6 port 53 { "none"; };
     directory "/var/cache/bind";
     recursion yes;
     allow-query { localclients; };
@@ -93,7 +95,6 @@ In this example, this will provide dns to a local lab and the network ip is 198.
     // you will need to update your keys. See https://www.isc.org/bind-keys
     //========================================================================
     dnssec-validation yes;
-    listen-on-v6 { "none"; };
     };
     EOF
 
