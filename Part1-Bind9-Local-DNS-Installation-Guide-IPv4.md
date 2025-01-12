@@ -59,8 +59,6 @@ In terminal run to create the file.
     EOF
 
 
-Since this was a server config default, it is safer to reboot to make sure change takes place.
-
 #### 1.2 Configuring Global Options
 The `named.conf.options` file is where you set the configuration options for the overall dns server.
 Typically you will define acl(s) and then apply options to the acl(s)
