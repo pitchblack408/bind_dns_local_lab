@@ -117,6 +117,9 @@ Typically you will define acl(s) and then apply options to the acl(s)
     2001:4860:4860::8888; // Google
     2001:4860:4860::8844; // Google
     };
+    // As a fall-back behavior, BIND resolves queries recursively if the 
+    // forwarder servers do not respond. Disabling this behavior
+    forward only;
     
     // Need to configure dynamic keys to use dnssec.
     //dnssec-enable yes;
