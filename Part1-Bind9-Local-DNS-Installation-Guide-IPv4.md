@@ -27,9 +27,9 @@ reverse lookup
 
 
 ## Prereqs
-Raspberry Pi or Ubuntu Linux
-A Local router
-Static ip assigned to your Raspberry Pi or Ubuntu Linux box
+* Raspberry Pi or Ubuntu Linux (the new dns server)
+* A local router with ipv4 dhcp 
+* A reserved IPV4 ip on router and that ip is static on the dns server
 
 ## Install bind9
 

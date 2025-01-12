@@ -8,13 +8,10 @@ This was done with a Nonexistent DNS name and can’t use commercial encryption 
 
 This was done on raspberry pi 3, but should work on other environments which have bind9 and are debian based.
 
-
 ## Prereqs
 * Raspberry Pi or Ubuntu Linux Box
-* Completed "Part1 Bind9 Local DNS Installation Guide IPv4"
-* IPV6 is turn on local router ( without this set on the router, the box you are using will set its own ipv6  )
-* Statically set IPV6 ips on router
-
+* IPV6 is turn on local router
+* Completed "Part2-Bind9-Local-DNS-Installation-Guide-IPv4-IPv6"
 
 ## Background
 Red Hat's BIND (Berkeley Internet Name Domain) package includes support for DNSSEC (Domain Name System Security Extensions). DNSSEC is a suite of extensions that adds security to the DNS by enabling domain name servers to sign their data cryptographically, which helps ensure the authenticity and integrity of DNS responses.
@@ -38,7 +35,9 @@ create a keys directory
     sudo mkdir /etc/bind/keys
 
 
-Enable DNSSEC validation in your configuration (/etc/named.conf):
+Enable DNSSEC validation in your configuration options file (named.conf.optionsv):
+
+
 
     options {
         dnssec-enable yes;

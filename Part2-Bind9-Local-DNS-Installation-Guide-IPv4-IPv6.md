@@ -9,10 +9,11 @@ This guide will attempt to add ipv6 to the previous set up that was made in the 
 This guide is only for setting up a internal dns for internal purposes.
 
 ## Prereqs
-* Raspberry Pi or Ubuntu Linux Box
+* Raspberry Pi or Ubuntu Linux (the new dns server)
+* A local router with ipv4 dhcp 
 * Completed "Part1 Bind9 Local DNS Installation Guide IPv4"
-* IPV6 is turn on local router ( without this set on the router, the box you are using will set its own ipv6  )
-* Statically set IPV6 ips on router
+* IPV6 is turn on local router
+* Reserve a IPV6 ip on router using the server's mac address
 
 
 ## Determine subnet from ipv6 
