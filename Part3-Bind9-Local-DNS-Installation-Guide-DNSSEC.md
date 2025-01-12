@@ -48,7 +48,7 @@ Enable DNSSEC validation in your configuration (/etc/named.conf):
 ## Generate Keys:
 Use dnssec-keygen to generate the required keys.
 
-    dnssec-keygen -a RSASHA256 -b 2048 -n ZONE pichblack408.lab
+    dnssec-keygen -a RSASHA256 -b 4096 -n ZONE pichblack408.lab
 
 Sign the Zone:
 
