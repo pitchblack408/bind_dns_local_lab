@@ -6,7 +6,12 @@ This will get a single installation of bind9 up and running for a local lab.
 
 This was done with a Nonexistent DNS name and can’t use commercial encryption certificates. But the easiest way to fix that is register a domain name and use a subdomain name `internal` such that `internal.example.com` would be used for internal dns routing. But in this example we are using a nonexistent domain.
 
-This was done on raspberry pi 3, but should work on other environments which have bind9 and are debian based.
+This guide uses raspberry pi 3, but should work on other environments which have bind9 and are debian based.
+
+This guide is only for setting up a internal dns for internal purposes.
+
+Simply copying, pasting, and running the commands will not work. You will need to changed subnets, ips, and other values to make this work with your environment.
+
 
 
 ## Background Info
@@ -373,3 +378,5 @@ This is a short exercise will help one get started with a local install of dns, 
 * https://kb.isc.org/docs/aa-01526
 * https://wiki.debian.org/Bind9
 * https://www.doscher.com/work-local-dns/
+* https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/managing_networking_infrastructure_services/assembly_setting-up-and-configuring-a-bind-dns-server_networking-infrastructure-services#proc_updating-a-bind-zone-file_assembly_configuring-zones-on-a-bind-dns-server
+* https://www.digitalocean.com/community/tutorials/how-to-setup-dnssec-on-an-authoritative-bind-dns-server-2

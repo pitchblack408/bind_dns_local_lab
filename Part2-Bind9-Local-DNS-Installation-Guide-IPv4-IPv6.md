@@ -4,9 +4,16 @@ Do not use this guide to setup a public DNS server!!
 
 This is a fallow up on "Part1 Bind9 Local DNS Installation Guide IPv4"
 
-This guide will attempt to add ipv6 to the previous set up that was made in the "Part1 Bind9 Local DNS Installation Guide IPv4" document.
+This will get a single installation of bind9 up and running for a local lab.
+
+This was done with a Nonexistent DNS name and can’t use commercial encryption certificates. But the easiest way to fix that is register a domain name and use a subdomain name `internal` such that `internal.example.com` would be used for internal dns routing. But in this example we are using a nonexistent domain.
+
+This guide uses raspberry pi 3, but should work on other environments which have bind9 and are debian based.
 
 This guide is only for setting up a internal dns for internal purposes.
+
+Simply copying, pasting, and running the commands will not work. You will need to changed subnets, ips, and other values to make this work with your environment.
+
 
 ## Prereqs
 * Raspberry Pi or Ubuntu Linux (the new dns server)
@@ -318,4 +325,4 @@ This is a short exercise will help one get started with a local install of dns w
 * https://kb.isc.org/docs/aa-01526
 * https://wiki.debian.org/Bind9
 * https://www.doscher.com/work-local-dns/
-* https://www.pitchblack408.com -->
+* https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/managing_networking_infrastructure_services/assembly_setting-up-and-configuring-a-bind-dns-server_networking-infrastructure-services#proc_updating-a-bind-zone-file_assembly_configuring-zones-on-a-bind-dns-server
