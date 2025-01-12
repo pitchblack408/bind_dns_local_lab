@@ -95,13 +95,16 @@ In this example, this will provide dns to a local lab and the network ip is 198.
     // ports to talk. See http://www.kb.cert.org/vuls/id/800113
     // If your ISP provided one or more IP addresses for stable
     // nameservers, you probably want to use them as forwarders.
-    // Uncomment the following block, and insert the addresses replacing
-    // the all-0's placeholder.
+    
     forwarders {
     8.8.8.8; // Google
     8.8.4.4; // Google
     };
     
+    // As a fall-back behavior, BIND resolves queries recursively if the 
+    // forwarder servers do not respond. Disabling this behavior
+    forward only;
+
     // Need to configure dynamic keys to use dnssec.
     //dnssec-enable yes;
     //========================================================================
@@ -341,6 +344,10 @@ Adding blocking acls
     8.8.8.8; // Google
     8.8.4.4; // Google
     };
+
+    // As a fall-back behavior, BIND resolves queries recursively if the 
+    // forwarder servers do not respond. Disabling this behavior
+    forward only;
 
     // Need to configure dynamic keys to use dnssec.
     dnssec-enable yes;
