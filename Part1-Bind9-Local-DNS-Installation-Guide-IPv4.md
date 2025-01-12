@@ -4,7 +4,7 @@ Do not use this guide to setup a public DNS server!!
 
 This will get a single installation of bind9 up and running for a local lab.
 
-This was done with a Nonexistent DNS name and can’t use commercial encryption certificates. But the easiset way to fix that is register a domain name and use a subdomain name `internal` such that `internal.example.com` would be used for internal dns routing. But in this example we are using a nonexistent domain.
+This was done with a Nonexistent DNS name and can’t use commercial encryption certificates. But the easiest way to fix that is register a domain name and use a subdomain name `internal` such that `internal.example.com` would be used for internal dns routing. But in this example we are using a nonexistent domain.
 
 This was done on raspberry pi 3, but should work on other environments which have bind9 and are debian based.
 
