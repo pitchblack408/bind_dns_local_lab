@@ -48,13 +48,13 @@ Enable DNSSEC validation in your configuration (/etc/named.conf):
 ## Generate Keys:
 Use dnssec-keygen to generate the required keys.
 
-    dnssec-keygen -a RSASHA256 -b 2048 -n ZONE example.com
+    dnssec-keygen -a RSASHA256 -b 2048 -n ZONE pichblack408.lab
 
 Sign the Zone:
 
 Use dnssec-signzone to sign your zone file.
 
-    dnssec-signzone -A -3 randomstring -o example.com example.com.db
+    dnssec-signzone -A -3 randomstring -o pichblack408.lab pichblack408.lab.db
 
 ## Update Zone Configuration:
 Update the named.conf file to load the signed zone.
