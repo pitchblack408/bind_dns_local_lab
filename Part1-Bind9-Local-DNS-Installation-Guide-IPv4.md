@@ -265,7 +265,6 @@ In this example, this will provide dns to a local lab and the network ip is 198.
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys. See https://www.isc.org/bind-keys
     //========================================================================
-    //dnssec-enable yes;
     //dnssec-validation auto;
 
     };
@@ -303,6 +302,32 @@ Because in our example this will be the main and only dns server, we will set th
     include "/etc/bind/zones.rfc1918";
     EOF
 
+### Fix /etc/bind/zones.rfc1918
+BIND will have zone files for these private IP address ranges to allow reverse lookups.
+These zones are defined in the zones.rfc1918 file and we need to comment out the one that we defined for this lab.
+
+    sudo tee /etc/bind/named.conf.local > /dev/null << EOF
+    zone "10.in-addr.arpa"      { type master; file "/etc/bind/db.empty"; };
+
+    zone "16.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "17.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "18.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "19.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "20.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "21.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "22.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "23.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "24.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "25.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "26.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "27.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "28.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "29.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "30.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+    zone "31.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+
+    # zone "168.192.in-addr.arpa" { type master; file "/etc/bind/db.empty"; };
+    EOF
 
 ## 7.1 Configuring Local Options - Part 2
 In the the step above we referenced where we are going to place the zone config files. Now we need to create that folder and the files.
@@ -515,7 +540,6 @@ Adding blocking acls
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys. See https://www.isc.org/bind-keys
     //========================================================================
-    dnssec-enable yes;
     dnssec-validation auto;
     };
     EOF
