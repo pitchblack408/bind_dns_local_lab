@@ -116,7 +116,7 @@ Contains pre-configured definitions for reverse DNS zones corresponding to priva
 
     sudo apt install bind9 bind9utils bind9-doc
 
-## 2. Open ports from firewall on linux instance
+## 2. Open DNS port on firewall
 Raspberry Pi and Debian 12 use the nftables service for the OS firewall. Check status and if it is enabled and running make sure you configure it to allow traffic on port 53.
 
 In my case it is disabled
