@@ -144,6 +144,9 @@ Because in our example this will be the main and only dns server, we will set th
 In addition the ipv6 unique local range fd84:f006:1a18::/64 and or IPv6 local link range (fe80::/10) for reverse mapping are added.
 
     sudo tee /etc/bind/named.conf.local > /dev/null << EOF
+    //
+    // Do any local configuration here
+    //
     // Primary server for pitchblack408.lab
     zone "pitchblack408.lab" {
         type primary;
@@ -163,6 +166,10 @@ In addition the ipv6 unique local range fd84:f006:1a18::/64 and or IPv6 local li
         type primary;
         file "/etc/bind/zones/fd84f0061a18"; // zone file path for fd84:f006:1a18::/64
     };
+
+    // Consider adding the 1918 zones here, if they are not used in your
+    // organization
+    include "/etc/bind/zones.rfc1918";
     EOF
 
 
@@ -312,7 +319,7 @@ If you tried from a windows machines it returns `Server:  UnKnown` but if it ret
 
 
 # Conclusion
-This is a short exercise will help one get started with a local install of dns with ipv4 and ipv6 using the Unique Link Address as the subnet, but there is much more to read and work with in dns. In the future, I plan on making a part 3 which main focus will be dnssec.
+This is a short exercise will help one get started with a local install of dns with ipv4 and ipv6 using the Unique Link Address as the subnet.
 
 
 # Sources
