@@ -197,6 +197,23 @@ In terminal run to create the file.
     OPTIONS="-u bind -4"
     EOF
 
+## 6.0 Configure named.conf
+The named.conf file is your main file that will call the includes sequentially.
+
+    sudo tee /etc/bind/named.conf > /dev/null << EOF
+    // This is the primary configuration file for the BIND DNS server named.
+    //
+    // Please read /usr/share/doc/bind9/README.Debian for information on the
+    // structure of BIND configuration files in Debian, *BEFORE* you customize
+    // this configuration file.
+    //
+    // If you are just adding zones, please do that in /etc/bind/named.conf.local
+
+    include "/etc/bind/named.conf.options";
+    include "/etc/bind/named.conf.local";
+    include "/etc/bind/named.conf.default-zones";
+    EOF
+
 
 ## 6.1 Configuring Bind's Global Options
 The `named.conf.options` file is where you set the configuration options for the overall dns server.
@@ -244,12 +261,11 @@ In this example, this will provide dns to a local lab and the network ip is 198.
     // forwarder servers do not respond. Disabling this behavior
     forward only;
 
-    // Need to configure dynamic keys to use dnssec.
-    //dnssec-enable yes;
     //========================================================================
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys. See https://www.isc.org/bind-keys
     //========================================================================
+    //dnssec-enable yes;
     //dnssec-validation auto;
 
     };
@@ -266,6 +282,9 @@ The `/etc/bind/named.conf.local` file contains the local DNS server configuratio
 Because in our example this will be the main and only dns server, we will set the local options up to have a single primary zone. In addition, this is being organized such that a zone will manage a subnet of `192/168.0.0/16` but in reality we are only going to be adding records for the acl we defined above as `192.168.4.0/24`. 
 
     sudo tee /etc/bind/named.conf.local > /dev/null << EOF
+    //
+    // Do any local configuration here
+    //
     // Primary server for pitchblack408.lab
     zone "pitchblack408.lab" {
     type primary;
@@ -278,6 +297,10 @@ Because in our example this will be the main and only dns server, we will set th
     file "/etc/bind/zones/192.168"; # 192/168.0.0/16 subnet
     // allow-transfer ; # ns2 private IP address - secondary
     };
+    
+    // Consider adding the 1918 zones here, if they are not used in your
+    // organization
+    include "/etc/bind/zones.rfc1918";
     EOF
 
 
@@ -432,8 +455,12 @@ Documentation with configuration examples of logging to files for logical separa
 * https://wiki.debian.org/Bind9
 
 
-## 10. Securing DNS
+## 10. Securing DNS and DNSSEC
 The goal of this document was to create an internal dns for a lab. But even so, you might want to create some additional acls and block from certain sources. In addition, create a registered domain and used that name instead of the Nonexistent DNS name.
+
+In addition, you would turn on DNSSEC by setting `dnssec-enable yes;`  and `dnssec-validation auto;`. DNSSEC will generate and rotate keys for signing.  
+In order for this to work properly, you need the proper permissions the service to read and write properly, which might need some tweaking depending on the security solution.
+Also, timing is important so you will need to have configured the server to use a reliable ntp server.
 
 Adding blocking acls
 
@@ -484,14 +511,12 @@ Adding blocking acls
     // forwarder servers do not respond. Disabling this behavior
     forward only;
 
-    // Need to configure dynamic keys to use dnssec.
-    dnssec-enable yes;
     //========================================================================
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys. See https://www.isc.org/bind-keys
     //========================================================================
+    dnssec-enable yes;
     dnssec-validation auto;
-
     };
     EOF
 

@@ -121,12 +121,11 @@ Typically you will define acl(s) and then apply options to the acl(s)
     // forwarder servers do not respond. Disabling this behavior
     forward only;
     
-    // Need to configure dynamic keys to use dnssec.
-    //dnssec-enable yes;
     //========================================================================
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys. See https://www.isc.org/bind-keys
     //========================================================================
+    dnssec-enable yes;
     dnssec-validation auto;
 
     };
