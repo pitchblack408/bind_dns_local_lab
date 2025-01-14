@@ -127,7 +127,7 @@ Typically you will define acl(s) and then apply options to the acl(s)
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys. See https://www.isc.org/bind-keys
     //========================================================================
-    dnssec-validation yes;
+    dnssec-validation auto;
 
     };
     EOF

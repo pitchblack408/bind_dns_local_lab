@@ -12,13 +12,32 @@ This guide is only for setting up a internal dns for internal purposes.
 
 Simply copying, pasting, and running the commands will not work. You will need to changed subnets, ips, and other values to make this work with your environment.
 
+## Prereqs
+* Raspberry Pi or Ubuntu Linux (the new dns server)
+* A local router with ipv4 dhcp 
+* A reserved IPV4 ip on router and that ip is static on the dns server
 
 
 ## Background Info
 
-Nonexistent DNS names can’t use commercial encryption certificates, such as those ending in .local, .lab, etc. 
+DNS Sever Types
 
-Register a domain name for your DNS service through a domain registrar
+    +----------------------+------------------------------------+----------------------------------------+
+    | Type                 | Key Role                          | Example Usage                          |
+    +----------------------+------------------------------------+----------------------------------------+
+    | Recursive            | Resolves queries recursively      | ISP's DNS, Google DNS                 |
+    | Authoritative        | Stores DNS zone data              | Domain registrars, internal DNS servers |
+    | Root                 | Entry point in DNS hierarchy      | Root name servers                     |
+    | TLD                  | Handles top-level domain queries  | .com, .org servers                    |
+    | Caching              | Speeds up DNS resolution          | Local caching servers                 |
+    | Forwarding           | Forwards queries to other servers | Enterprise networks                   |
+    | Resolver             | Resolves queries for clients      | OS DNS resolver, custom resolvers     |
+    | Dynamic DNS          | Updates DNS records dynamically   | Home networks, IoT devices            |
+    | Private DNS          | Internal network resolution       | Internal applications, labs           |
+    +----------------------+------------------------------------+----------------------------------------+
+
+
+Nonexistent DNS - names which can’t use commercial encryption certificates, such as those ending in .local, .lab, etc. 
 
 Zone - a bind zone is a segment of the DNS namespace that is managed by a specific DNS server. This server is responsible for providing authoritative answers for the domain names within that zone. Zones can be defined as either primary or secondary.
 
@@ -26,28 +45,143 @@ Primary Zone - The primary bind zone is the primary copy of the zone file. Chang
 
 Secondary Zone - A secondary bind zone receives a copy of the zone data from the primary zone. It acts as a backup and can also provide authoritative answers for the zone, helping to distribute the load and improve reliability.
 
-forward lookup
+forward lookup - Converts a domain name into an IP address.
 
-reverse lookup
+reverse lookup - Converts an IP address into a domain name
 
 
-## Prereqs
-* Raspberry Pi or Ubuntu Linux (the new dns server)
-* A local router with ipv4 dhcp 
-* A reserved IPV4 ip on router and that ip is static on the dns server
 
-## Install bind9
+# Bind9 Configuration Default Folder Structure
 
-sudo apt install bind9 bind9utils bind9-doc
+    /
+    |-- etc
+        |-- bind
+            |-- bind.keys
+            |-- db.0
+            |-- db.127
+            |-- db.255
+            |-- db.empty
+            |-- db.local
+            |-- named.conf
+            |-- named.conf.default-zones
+            |-- named.conf.local
+            |-- named.conf.options
+            |-- rndc.key
+            `-- zones.rfc1918
 
-## Open ports from firewall on linux instance
+bind.keys<br>
+Contains the DNSSEC trust anchors for root zones. These trust anchors are used to validate DNSSEC-signed queries. This file is updated automatically with new root zone keys when necessary.
 
-## Configure Bind9
-First you will want to start with just ipv4 and get that working. So we will force bind to use ipv4 and then later change that.
-### 1. IPV4
+rndc.key<br>
+Contains the key used for secure communication between the rndc (Remote Name Daemon Control) utility and the BIND server (named). It enables you to control the server remotely, such as reloading configurations or restarting zones.
 
-#### 1.1 Default Server Settings
-If using a debian or ubuntu based linux system you will need to turn off resolveconf
+Zone Files
+db.127<br>
+Provides a default configuration for the 127.0.0.0/8 loopback network. It ensures that DNS queries for localhost resolve correctly.
+
+db.0<br>
+A placeholder for reverse DNS lookups for the 0.0.0.0/8 address space, which is typically reserved and not routed.
+
+db.255<br>
+A placeholder for reverse DNS lookups for the 255.0.0.0/8 address space, often used for broadcast traffic.
+
+db.local<br>
+Provides a template or default for resolving localhost to 127.0.0.1.
+
+db.empty<br>
+A template for empty zones. It prevents unnecessary DNS traffic to certain reserved or unused address ranges.
+
+Configuration Files
+named.conf
+The main configuration file for the named DNS server. It typically includes other configuration files, such as named.conf.local, named.conf.options, and named.conf.default-zones.
+
+named.conf.local<br>
+Used for local customizations, such as defining your own zones (e.g., forward or reverse lookup zones). You can define zone files for internal or external domains here.
+
+named.conf.options<br>
+Contains global options for the BIND server, such as listening interfaces, query ACLs, forwarding settings, and recursion behavior.
+
+named.conf.default-zones<br>
+Defines default zones, including reverse lookups for 127.0.0.1 (localhost) and 0.0.0.0, as well as the root zone (.). These default zones prevent unnecessary traffic.
+
+
+zones.rfc1918<br>
+Contains pre-configured definitions for reverse DNS zones corresponding to private IP address ranges (as specified in RFC 1918). This is used for internal networks to ensure reverse lookups resolve correctly for private addresses.
+
+
+
+# Installation Guide Start
+
+## 1. Install bind9
+
+    sudo apt install bind9 bind9utils bind9-doc
+
+## 2. Open ports from firewall on linux instance
+Raspberry Pi and Debian 12 use the nftables service for the OS firewall. Check status and if it is enabled and running make sure you configure it to allow traffic on port 53.
+
+In my case it is disabled
+
+    systemctl status nftables
+    ○ nftables.service - nftables
+        Loaded: loaded (/lib/systemd/system/nftables.service; disabled; preset: enabled)
+        Active: inactive (dead)
+        Docs: man:nft(8)
+                http://wiki.nftables.org
+
+If enabled and running check configured rules for port 53
+
+    sudo nft list ruleset | grep -w 53
+
+If you need to add a rule edit `/etc/nftables.conf`
+
+    table inet filter {
+        chain input {
+            type filter hook input priority 0; policy drop;
+
+            # Allow DNS (TCP and UDP) on port 53
+            udp dport 53 accept
+            tcp dport 53 accept
+
+            # Other rules...
+        }
+    }
+
+
+
+## 3. AppArmor, SeLinux, chroot
+AppArmor, SELinux, and chroot are tools and mechanisms that provide different approaches to securing a system or process.
+Each one of them may change the way in which you configure bind. Check to see which one you might have installed. Then verify if it is running.
+Sometimes the solution is installed but not running.  I have listed some commands below for you to check.
+
+Check for chroot
+
+    ls /srv/chroot /var/chroot
+
+Check for 
+
+    sudo sestatus
+
+Check for AppArmor
+
+    sudo aa-status
+
+
+The Raspberry pi Os which ws installed on my pi 3 is actually Debian 12 (Bookworm).
+
+    apparmor module is loaded.
+    apparmor filesystem is not mounted.
+
+In my case apparmor module is loaded but not mounted, which normally should be mounted but in my case raspberry is having issues mounting it. 
+I am not mounting it in my case, but going to go forward. I may make another post about getting it working with raspberry. But my point is that whichever 
+security solution your OS may come with will affect the install and you need to work with it, not against it.
+
+## 4. Ensure IPV4
+First you will want to start with just ipv4 and get that working. 
+So we will force bind to use ipv4 and then later change that.
+Be sure to have a reserved IPV4 ip on router and that ip is static on this server.
+
+## 5. Change Default Server Settings for Bind
+With debian based linux systems you will need to turn off resolveconf by creating a default bind setting on the server.
 Setting `RESOLVCONF=no` in the `/etc/default/bind9` file can prevent resolvconf from interfering with BIND9’s operation. 
 This configuration ensures that BIND9 does not attempt to modify /etc/resolv.conf through resolvconf, which leads to conflicts or issues 
 if resolvconf is not properly configured.
@@ -64,7 +198,7 @@ In terminal run to create the file.
     EOF
 
 
-#### 1.2 Configuring Global Options
+## 6.1 Configuring Bind's Global Options
 The `named.conf.options` file is where you set the configuration options for the overall dns server.
 Typically you will define acl(s) and then apply options to the acl(s)
 In this example, this will provide dns to a local lab and the network ip is 198.168.4.0.
@@ -77,7 +211,7 @@ In this example, this will provide dns to a local lab and the network ip is 198.
     };
     options {
     listen-on port 53 { 127.0.0.1; 192.168.4.141; };
-    listen-on-v6 port 53 { "none"; };
+    listen-on-v6 port 53 { none; };
     directory "/var/cache/bind";
 
     // If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
@@ -116,17 +250,17 @@ In this example, this will provide dns to a local lab and the network ip is 198.
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys. See https://www.isc.org/bind-keys
     //========================================================================
-    dnssec-validation yes;
+    //dnssec-validation auto;
 
     };
     EOF
 
-#### 1.2 Validate Global Options file
+## 6.2 Validate Global Options file
 Bind provides a command which verifies server configuration for syntax errors but does not check the semantics or correctness of the configuration’s content.
 
     sudo named-checkconf
 
-#### 1.3 Configuring Local Options - Part 1
+## 6.3 Configuring Local Options - Part 1
 The `/etc/bind/named.conf.local` file contains the local DNS server configuration, including zone declarations and other local settings. It is where you declare the zones associated with your domain and define their properties.
 
 Because in our example this will be the main and only dns server, we will set the local options up to have a single primary zone. In addition, this is being organized such that a zone will manage a subnet of `192/168.0.0/16` but in reality we are only going to be adding records for the acl we defined above as `192.168.4.0/24`. 
@@ -147,7 +281,7 @@ Because in our example this will be the main and only dns server, we will set th
     EOF
 
 
-#### 1.4 Configuring Local Options - Part 2
+## 7.1 Configuring Local Options - Part 2
 In the the step above we referenced where we are going to place the zone config files. Now we need to create that folder and the files.
 
 First create the folder
@@ -215,7 +349,7 @@ Check status
     sudo systemctl status bind9
 
 
-# Verify Results
+## 8. Verify Results
 On the dns server run dig and nslookup to verify results.
 
 Verify reverse lookup
@@ -233,11 +367,7 @@ From a different PC on your network
 
 If you tried from a windows machines it returns `Server:  UnKnown` but if it returns the ip address you are fine.
 
-# Add dns to Devices
-The dns server is working, but the other computers will not know about it automatically.
-You will have to add the dns server(s) to ipv4 settings per each device. 
-    
-# Default logging
+## 9. Default logging
  By default, BIND9 has minimal logging enabled to avoid performance overhead, but it allows you to configure more detailed logging if needed. In modern systems, journalctl is the tool used to query and manage logs created by systemd-journald, the logging component of systemd. In legacy systems, BIND may use syslog to log messages unless otherwise configured. These logs are typically stored in system log files like /var/log/syslog, /var/log/messages, or /var/log/daemon.log.
 
     sudo journalctl -u named --follow
@@ -302,7 +432,7 @@ Documentation with configuration examples of logging to files for logical separa
 * https://wiki.debian.org/Bind9
 
 
-# Securing DNS
+## 10. Securing DNS
 The goal of this document was to create an internal dns for a lab. But even so, you might want to create some additional acls and block from certain sources. In addition, create a registered domain and used that name instead of the Nonexistent DNS name.
 
 Adding blocking acls
@@ -360,7 +490,7 @@ Adding blocking acls
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys. See https://www.isc.org/bind-keys
     //========================================================================
-    dnssec-validation yes;
+    dnssec-validation auto;
 
     };
     EOF

@@ -43,7 +43,7 @@ For more information on
 
 ## Setting Up DNSSEC on Bind
 ### 1.1 Update options configuration 
-Set `dnssec-enable` and  `dnssec-validation` both to yes in your configuration options file.
+Set `dnssec-enable` to yes and  `dnssec-validation` to auto in your configuration options file.
 
 Note: you will need to change ipv4 and ipv6 values to match your environment
 
@@ -93,13 +93,16 @@ Note: you will need to change ipv4 and ipv6 values to match your environment
     2001:4860:4860::8888; // Google
     2001:4860:4860::8844; // Google
     };
-    
+    // As a fall-back behavior, BIND resolves queries recursively if the 
+    // forwarder servers do not respond. Disabling this behavior
+    forward only;
+
     //========================================================================
     // If BIND logs error messages about the root key being expired,
     // you will need to update your keys. See https://www.isc.org/bind-keys
     //========================================================================
     dnssec-enable yes;
-    dnssec-validation yes;
+    dnssec-validation auto;
 
     };
     EOF
